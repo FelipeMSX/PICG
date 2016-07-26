@@ -31,6 +31,14 @@ def imread(filename):
 def nchannels(image):
     return 1 if len(image.shape) == 2 else 3
 
+def isgray(image):
+    return nchannels(image) == 2
+
+def isrgb(image):
+    return nchannels(image) == 3
+
+
+
 #Questao 04
 def size(image):
     vector = range(2)
@@ -56,6 +64,11 @@ def calcavarage(pixelRed, pixelGreen, pixelBlue):
     blue    = pixelBlue * 0.114
     return (red + green + blue) / 3
 
+#Questao 06
+def imreadgray(filename):
+    img = imread(filename)
+    return rgb2gray(img) if isrgb(img) else img
+
 #testes
 imageRGB = imread('zenfoneGO.jpg')
 imageGrey = imread('imagemCinza.jpg')
@@ -66,3 +79,6 @@ imageGrey = imread('imagemCinza.jpg')
 # print(size(imageGrey))
 # print(type(size(imageGrey)[0]))
 # rgb2gray(imageRGB)
+
+Image.fromarray(imreadgray('zenfoneGO.jpg')).show()
+Image.fromarray(imreadgray('imagemCinza.jpg')).show()
