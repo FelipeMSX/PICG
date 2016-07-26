@@ -27,5 +27,23 @@ def imread(filename):
 # img.resize((50,50)).show()
 
 #Questao 03
+# image.layers para imagens
 def nchannels(image):
-    return image.layers
+    return 1 if len(image.shape) == 2 else 3
+
+#Questao 04
+def size(image):
+    vector = range(2)
+    vector[0] = image.shape[0] #Altura
+    vector[1] = image.shape[1] #Largura
+    return vector
+
+#testes
+imageRGB = imread('zenfoneGO.jpg')
+imageGrey = imread('imagemCinza.jpg')
+print(nchannels(imageRGB))
+print(nchannels(imageGrey))
+
+print(size(imageRGB))
+print(size(imageGrey))
+print(type(size(imageGrey)[0]))
