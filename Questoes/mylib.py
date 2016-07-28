@@ -44,7 +44,7 @@ def isrgb(image):
 
 #Questao 04 OK!!!
 def size(image):
-    vector = range(2)
+    vector = [0]*2
     vector[0] = image.shape[0] #Altura
     vector[1] = image.shape[1] #Largura
     return vector
@@ -111,6 +111,29 @@ def negative(image):
                 newImage[x][y][2] = MAX - (newImage[x][y][2])
     return newImage
 
+#Questao 10 OK depende da questao 07 q estou com duvida.
+def contrast(r, m, f):
+    return r(f - m) + m
+
+#Questao 11 OK!!!
+def hist(image):
+    imgSize = size(image)
+
+    if isgray(image):
+        count = [0]*256
+        for x in range(0, imgSize[0]):
+            for y in range(0, imgSize[1]):
+                count[image[x][y]] += 1
+        return count
+    else:
+        count = [[0]*256, [0]*256, [0]*256]
+        for x in range(0, imgSize[0]):
+            for y in range(0, imgSize[1]):
+                count[0][image[x][y][0]] += 1
+                count[1][image[x][y][1]] += 1
+                count[2][image[x][y][2]] += 1
+        return count
+
 #testes----------------------------------------------------
 imageRGB = imread('zenfoneGO.jpg')
 imageGrey = imread('zenfoneGOGrey.jpg')
@@ -129,3 +152,7 @@ energiaGrey = imread('EnergiaCinza.jpg')
 
 #Questao 09
 # Image.fromarray(negative(imageGrey)).show()
+
+#Questao 10
+# v = hist(energiaRG)
+# v = hist(energiaGrey)
