@@ -34,9 +34,11 @@ def imread(filename):
 def nchannels(image):
     return 1 if len(image.shape) == 2 else 3
 
+#precisa ser melhorada passivel de bugs
 def isgray(image):
     return nchannels(image) == 1
 
+#precisa ser melhorada passivel de bugs
 def isrgb(image):
     return nchannels(image) == 3
 
@@ -77,7 +79,7 @@ def imshow(image):
     return
 
 
-#Questao 08 OK!!
+#Questao 08 OK!!!
 def thresh(image, limit):
     newImage = image.copy()
     vector = size(newImage)
@@ -89,8 +91,24 @@ def thresh(image, limit):
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
                 newImage[x][y][0] = MAX if (newImage[x][y][0] >= limit) else MIN
-                newImage[x][y][1] = MAX if (newImage[x][y][0] >= limit) else MIN
-                newImage[x][y][2] = MAX if (newImage[x][y][0] >= limit) else MIN
+                newImage[x][y][1] = MAX if (newImage[x][y][1] >= limit) else MIN
+                newImage[x][y][2] = MAX if (newImage[x][y][2] >= limit) else MIN
+    return newImage
+
+#Questao 09 OK!!!
+def negative(image):
+    newImage = image.copy()
+    vector = size(newImage)
+    if isgray(image):
+        for x in range(0, vector[0]):
+            for y in range(0, vector[1]):
+                newImage[x][y] = MAX - newImage[x][y]
+    else:
+        for x in range(0, vector[0]):
+            for y in range(0, vector[1]):
+                newImage[x][y][0] = MAX - (newImage[x][y][0])
+                newImage[x][y][1] = MAX - (newImage[x][y][1])
+                newImage[x][y][2] = MAX - (newImage[x][y][2])
     return newImage
 
 #testes----------------------------------------------------
@@ -107,4 +125,7 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # rgb2gray(imageRGB)
 
 #Questao 08
-#Image.fromarray(thresh(imageGrey,170)).show()
+# Image.fromarray(thresh(imageRGB,150)).show()
+
+#Questao 09
+# Image.fromarray(negative(imageGrey)).show()
