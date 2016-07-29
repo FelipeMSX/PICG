@@ -156,4 +156,3 @@ energiaGrey = imread('EnergiaCinza.jpg')
 #Questao 10
 # v = hist(energiaRG)
 # v = hist(energiaGrey)
-# v = hist(energiaGrey)
