@@ -202,3 +202,4 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # Questao 11
 # showhist(hist(energiaGrey))
 # showhist(hist(imageRGB))
+
