@@ -2,6 +2,7 @@ import matplotlib
 import numpy
 import scipy
 import matplotlib.pyplot as plt
+import math
 
 from PIL import Image
 
@@ -149,30 +150,112 @@ def hist(image):
 
 
 # Questao 12 OK!!!
-def showhist(hist):
-    N = 256
-    ind = numpy.arange(N)  # the x locations for the groups
-    width = 1  # the width of the bars
+# Questao 13 OK!!!
+def showhist(hist, bin =1):
+    # Questao 12--------------------------------------------------
+    # N = 256
+    # ind = numpy.arange(N)  # the x locations for the groups
+    # width = 1  # the width of the bars
+    # fig, ax = plt.subplots()
+    # if len(hist) == 256: #indica que 'e' cinza.
+    #     greyrect = ax.bar(ind, hist, width, color='w')
+    #
+    #     # add some text for labels, title and axes ticks
+    #     ax.set_ylabel('Quantidade')
+    #     ax.set_title('Pixels por Intensidade em escala de cinza')
+    # else:
+    #
+    #     redrect = ax.bar(ind, hist[0], width, color='r')
+    #     greenrect = ax.bar(ind, hist[1], width, color='g')
+    #     bluerect = ax.bar(ind, hist[2], width, color='b')
+    #
+    #     # add some text for labels, title and axes ticks
+    #     ax.set_ylabel('Quantidade')
+    #     ax.set_title('Pixels por Intensidade')
+    #     ax.legend((redrect[0], greenrect[0], bluerect[0]), ('RED', 'GREEN', 'BLUE'))
+    #
+    # plt.show()
+    #
+    # Questao 12--------------------------------------------------
+
+    lenght      = calchistlenght(hist, bin)
+    xvalues     = numpy.arange(lenght)*bin  # as posicoes do que serao exibidas no eixo X
+
+    if bin != 1:
+        for x in range(0, lenght-1):
+            xvalues[x] = xvalues[x+1]-1
+
+        xvalues[lenght-1] = 255
+
+    width   = 1  # the width of the bars
     fig, ax = plt.subplots()
-    if len(hist) == 256: #indica que 'e' cinza.
-        greyrect = ax.bar(ind, hist, width, color='w')
+    if len(hist) == 256: #indica que o hist foi feito com base em uma base de cinza
+        groupvector = grouphist(hist, bin, lenght)
+        greyrect = ax.bar(xvalues, groupvector, width, color='w')
 
         # add some text for labels, title and axes ticks
         ax.set_ylabel('Quantidade')
         ax.set_title('Pixels por Intensidade em escala de cinza')
     else:
-
-        redrect = ax.bar(ind, hist[0], width, color='r')
-        greenrect = ax.bar(ind, hist[1], width, color='g')
-        bluerect = ax.bar(ind, hist[2], width, color='b')
+        groupvectorred      = grouphist(hist[0], bin, lenght)
+        groupvectorgreen    = grouphist(hist[1], bin, lenght)
+        groupvectorblue     = grouphist(hist[2], bin, lenght)
+        redrect             = ax.bar(xvalues, groupvectorred, width, color='r')
+        greenrect           = ax.bar(xvalues, groupvectorgreen, width, color='g')
+        bluerect            = ax.bar(xvalues, groupvectorblue, width, color='b')
 
         # add some text for labels, title and axes ticks
         ax.set_ylabel('Quantidade')
         ax.set_title('Pixels por Intensidade')
+
         ax.legend((redrect[0], greenrect[0], bluerect[0]), ('RED', 'GREEN', 'BLUE'))
 
+    # Configuracoes visuais:
+    if bin >= 8:
+        ax.set_xticks(xvalues)
+
+    if bin > 1:
+        ax.set_xlabel('Pixels agrupados por '+ str(bin))
     plt.show()
     return
+
+
+# Agrupa os valores do vetor de acordo com o valor bin.
+def grouphist(hist, bin, lenght):
+    groupvector = [0] * lenght
+    count       = 0
+    acum        = 0
+    position    = 0
+    for x in range(0, 256):
+        if count <= bin:
+            acum += hist[x]
+
+        count += 1
+        if count > (bin - 1):
+            groupvector[position] = acum
+            acum                  = 0
+            count                 = 0
+            position += 1
+
+    if count != 0:
+        groupvector[position] = acum
+
+    return groupvector
+
+
+# Calcula o tamanho de posicoes necessarias com base no valor de agrupamento 'bin'.
+def calchistlenght(hist,bin):
+
+    if len(hist) == 256: # indica que o hist foi feito com base em uma base de cinza
+        lenght = (len(hist) / bin)
+        if len(hist) % bin != 0:
+            lenght += 1
+    else:
+        lenght = (len(hist[0]) / bin)
+        if len(hist[0]) % bin != 0:
+            lenght += 1
+
+    return lenght
 
 
 # testes----------------------------------------------------
@@ -201,5 +284,9 @@ energiaGrey = imread('EnergiaCinza.jpg')
 
 # Questao 11
 # showhist(hist(energiaGrey))
-# showhist(hist(imageRGB))
+# showhist(hist(imageRGB),25)
+
+# Questao 13
+# showhist(hist(energiaGrey))
+# showhist(hist(imageRGB),25)
 
