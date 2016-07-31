@@ -6,7 +6,8 @@ import math
 
 from PIL import Image
 
-MAX = 255
+MAXCAPACITY = 256
+MAXINTENSITY = 255
 MIN = 0
 
 
@@ -97,13 +98,13 @@ def thresh(image, limit):
     if isgray(image):
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
-                newImage[x][y] = MAX if (newImage[x][y] >= limit) else MIN
+                newImage[x][y] = MAXINTENSITY if (newImage[x][y] >= limit) else MIN
     else:
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
-                newImage[x][y][0] = MAX if (newImage[x][y][0] >= limit) else MIN
-                newImage[x][y][1] = MAX if (newImage[x][y][1] >= limit) else MIN
-                newImage[x][y][2] = MAX if (newImage[x][y][2] >= limit) else MIN
+                newImage[x][y][0] = MAXINTENSITY if (newImage[x][y][0] >= limit) else MIN
+                newImage[x][y][1] = MAXINTENSITY if (newImage[x][y][1] >= limit) else MIN
+                newImage[x][y][2] = MAXINTENSITY if (newImage[x][y][2] >= limit) else MIN
     return newImage
 
 
@@ -114,13 +115,13 @@ def negative(image):
     if isgray(image):
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
-                newImage[x][y] = MAX - newImage[x][y]
+                newImage[x][y] = MAXINTENSITY - newImage[x][y]
     else:
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
-                newImage[x][y][0] = MAX - (newImage[x][y][0])
-                newImage[x][y][1] = MAX - (newImage[x][y][1])
-                newImage[x][y][2] = MAX - (newImage[x][y][2])
+                newImage[x][y][0] = MAXINTENSITY - (newImage[x][y][0])
+                newImage[x][y][1] = MAXINTENSITY - (newImage[x][y][1])
+                newImage[x][y][2] = MAXINTENSITY - (newImage[x][y][2])
     return newImage
 
 
@@ -151,7 +152,7 @@ def hist(image):
 
 # Questao 12 OK!!!
 # Questao 13 OK!!!
-def showhist(hist, bin =1):
+def showhist(hist, bin = 1):
     # Questao 12--------------------------------------------------
     # N = 256
     # ind = numpy.arange(N)  # the x locations for the groups
@@ -257,7 +258,72 @@ def calchistlenght(hist,bin):
 
     return lenght
 
+# Questao 14 OK!!! necessario refatoracao
+def histeq(image):
+    imgequalized    = image.copy()
+    imgsize         = size(image)
+    qtdpixels       = imgsize[0]*imgsize[1]
+    histogram       = hist(image)
+    histqualized    = pmf(histogram, qtdpixels)
+    cdf(histqualized)
 
+    if len(histqualized) == 256:
+        for x in range(0, 256):
+            histqualized[x] *= MAXINTENSITY
+    else:
+        for x in range(0, 256):
+            histqualized[0][x] *= MAXINTENSITY
+            histqualized[1][x] *= MAXINTENSITY
+            histqualized[2][x] *= MAXINTENSITY
+
+
+    # Aplica o resultado da equalizacao na imagem
+    if len(histogram) == 256:
+        for x in range(0, imgsize[0]):
+            for y in range(0, imgsize[1]):
+                imgequalized[x][y] = int(histqualized[imgequalized[x][y]])
+
+    else:
+        for x in range(0, imgsize[0]):
+            for y in range(0, imgsize[1]):
+                imgequalized[x][y][0] = int(histqualized[0][imgequalized[x][y][0]])
+                imgequalized[x][y][1] = int(histqualized[1][imgequalized[x][y][1]])
+                imgequalized[x][y][2] = int(histqualized[2][imgequalized[x][y][2]])
+    return imgequalized
+
+
+# Divide o total de pixels pela quantidade em cada posicao do histograma.
+def pmf(hist, qtdpixels):
+
+    if len(hist) == 256:
+        histequ = [float(i) for i in hist]
+        for x in range(0, 256):
+            histequ[x] /= qtdpixels
+        return histequ
+    else:
+        histequ = [0] * 3
+        histequ[0] = [float(i) for i in hist[0]]
+        histequ[1] = [float(i) for i in hist[1]]
+        histequ[2] = [float(i) for i in hist[2]]
+        for x in range(0, 256):
+            histequ[0][x] /= qtdpixels
+            histequ[1][x] /= qtdpixels
+            histequ[2][x] /= qtdpixels
+        return histequ
+
+
+# Acumula os valores do histograma, a ultima posicao do vetor deve ser 1.
+def cdf(hist):
+    if len(hist) == 256:
+        for x in range(1, 256):
+            hist[x] = hist[x] + hist[x - 1]
+    else:
+        for x in range(1, 256):
+            hist[0][x] = hist[0][x] + hist[0][x - 1]
+            hist[1][x] = hist[1][x] + hist[1][x - 1]
+            hist[2][x] = hist[2][x] + hist[2][x - 1]
+
+    return hist
 # testes----------------------------------------------------
 imageRGB = imread('zenfoneGO.jpg')
 imageGrey = imread('zenfoneGOGrey.jpg')
@@ -290,3 +356,7 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # showhist(hist(energiaGrey))
 # showhist(hist(imageRGB),25)
 
+# Questao 14
+
+Image.fromarray(imageRGB).show()
+Image.fromarray(histeq(imageRGB)).show()
