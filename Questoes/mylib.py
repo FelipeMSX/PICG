@@ -179,7 +179,7 @@ def showhist(hist, bin = 1):
     #
     # Questao 12--------------------------------------------------
 
-    lenght      = calchistlenght(hist, bin)
+    lenght      = int(calchistlenght(hist, bin))
     xvalues     = numpy.arange(lenght)*bin  # as posicoes do que serao exibidas no eixo X
 
     if bin != 1:
@@ -324,6 +324,40 @@ def cdf(hist):
             hist[2][x] = hist[2][x] + hist[2][x - 1]
 
     return hist
+
+
+def convolve(image, mask):
+    centerposition = center(mask)
+    return
+
+# Define o centro da mascara.
+def center(mask):
+    lenght = masklen(mask)
+
+    i = int(lenght[0]/2)
+    for j in range(0, lenght[1]):
+        if iscenter(i, j, lenght[0], lenght[1]):
+            return i, j
+
+    return -1, -1
+
+
+# Verifica se na posicao M(i,j) se a quantidade de elementos na esquerda e direita sao iguais, e tambem se a quantidade
+# de elementos acima e abaixo sao iguais. Dessa forma encontramos o meio da mascara.
+def iscenter(i, j, linescount, columnscount):
+    left     = j
+    right    = columnscount - (j + 1)
+    upside   = i
+    downside = linescount - (i + 1)
+
+    # Se a quantidade de elementos forem iguais "e" por que esta no centro.
+    return left == right and upside == downside
+
+
+# retorna uma tupla com a quantidade de linhas e colunas da mascara.
+def masklen(mask):
+    return len(mask), len(mask[0])
+
 # testes----------------------------------------------------
 imageRGB = imread('zenfoneGO.jpg')
 imageGrey = imread('zenfoneGOGrey.jpg')
@@ -353,10 +387,18 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # showhist(hist(imageRGB),25)
 
 # Questao 13
-# showhist(hist(energiaGrey))
-# showhist(hist(imageRGB),25)
+#showhist(hist(energiaGrey),50)
+#showhist(hist(energiaRG),25)
 
 # Questao 14
 
-Image.fromarray(imageRGB).show()
-Image.fromarray(histeq(imageRGB)).show()
+#Image.fromarray(imageRGB).show()
+#Image.fromarray(histeq(imageGrey)).show()
+mask1x1 = [[0.0]]
+mask1x7 = [[0.0]*7]
+mask3x3 = [[0.0]*3, [0.0]*3, [0.0]*3]
+mask1x3 = [[0.0]*3]
+mask5x5 = [[0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5]
+mask3x7 = [[0.0]*7, [0.0]*7, [0.0]*7]
+mask7x3 = [[0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3]
+print(center(mask3x3))
