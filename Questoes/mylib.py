@@ -98,13 +98,13 @@ def thresh(image, limit):
     if isgray(image):
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
-                newImage[x][y] = MAXINTENSITY if (newImage[x][y] >= limit) else MIN
+                newImage[x][y] = MAXINTENSITY if (newImage[x][y] >= limit) else MININTENSITY
     else:
         for x in range(0, vector[0]):
             for y in range(0, vector[1]):
-                newImage[x][y][0] = MAXINTENSITY if (newImage[x][y][0] >= limit) else MIN
-                newImage[x][y][1] = MAXINTENSITY if (newImage[x][y][1] >= limit) else MIN
-                newImage[x][y][2] = MAXINTENSITY if (newImage[x][y][2] >= limit) else MIN
+                newImage[x][y][0] = MAXINTENSITY if (newImage[x][y][0] >= limit) else MININTENSITY
+                newImage[x][y][1] = MAXINTENSITY if (newImage[x][y][1] >= limit) else MININTENSITY
+                newImage[x][y][2] = MAXINTENSITY if (newImage[x][y][2] >= limit) else MININTENSITY
     return newImage
 
 
