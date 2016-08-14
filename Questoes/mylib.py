@@ -50,6 +50,22 @@ def isrgb(image):
     return nchannels(image) == 3
 
 
+# Se a imagem que foi usada para usar o hist for gray retorna true.
+def ishistgray(hist):
+    return len(hist) == 256
+
+
+# Se a intensidade do pixel for maior ou menor que o permitido o ajusto.
+def truncate(value):
+    v = int(value)
+    if   v > MAXINTENSITY:
+        return MAXINTENSITY
+    elif v < MININTENSITY:
+        return MININTENSITY
+
+    return v
+
+
 # Questao 04 OK!!!
 def size(image):
     vector = [0] * 2
@@ -154,51 +170,50 @@ def hist(image):
 # Questao 13 OK!!!
 def showhist(hist, bin = 1):
 
-    lenght      = int(calchistlenght(hist, bin))
-    xvalues     = numpy.arange(lenght)*bin  # as posicoes do que serao exibidas no eixo X
+    length      = int(calchistlength(hist, bin))
+    xvalues     = numpy.arange(length)*bin  # as posicoes do que serao exibidas no eixo X
 
     if bin != 1:
-        for x in range(0, lenght-1):
+        for x in range(0, length-1):
             xvalues[x] = xvalues[x+1]-1
 
-        xvalues[lenght-1] = 255
+        xvalues[length-1] = 255
 
-    width   = 1  # the width of the bars
+    width   = 0.2  # the width of the bars
     fig, ax = plt.subplots()
-    if len(hist) == 256: #indica que o hist foi feito com base em uma base de cinza
-        groupvector = grouphist(hist, bin, lenght)
+    if ishistgray(hist):
+        groupvector = grouphist(hist, bin, length)
         greyrect = ax.bar(xvalues, groupvector, width, color='w')
 
         # add some text for labels, title and axes ticks
         ax.set_ylabel('Quantidade')
         ax.set_title('Pixels por Intensidade em escala de cinza')
     else:
-        groupvectorred      = grouphist(hist[0], bin, lenght)
-        groupvectorgreen    = grouphist(hist[1], bin, lenght)
-        groupvectorblue     = grouphist(hist[2], bin, lenght)
+        groupvectorred      = grouphist(hist[0], bin, length)
+        groupvectorgreen    = grouphist(hist[1], bin, length)
+        groupvectorblue     = grouphist(hist[2], bin, length)
         redrect             = ax.bar(xvalues, groupvectorred, width, color='r')
-        greenrect           = ax.bar(xvalues, groupvectorgreen, width, color='g')
-        bluerect            = ax.bar(xvalues, groupvectorblue, width, color='b')
+        greenrect           = ax.bar(xvalues+width, groupvectorgreen, width, color='g')
+        bluerect            = ax.bar(xvalues+width*2, groupvectorblue, width, color='b')
 
         # add some text for labels, title and axes ticks
         ax.set_ylabel('Quantidade')
         ax.set_title('Pixels por Intensidade')
-
         ax.legend((redrect[0], greenrect[0], bluerect[0]), ('RED', 'GREEN', 'BLUE'))
 
     # Configuracoes visuais:
-    if bin >= 8:
+    if bin >= 5:
         ax.set_xticks(xvalues)
 
     if bin > 1:
-        ax.set_xlabel('Pixels agrupados por '+ str(bin))
+        ax.set_xlabel('Pixels agrupados por ' + str(bin))
     plt.show()
     return
 
 
 # Agrupa os valores do vetor de acordo com o valor bin.
-def grouphist(hist, bin, lenght):
-    groupvector = [0] * lenght
+def grouphist(hist, bin, length):
+    groupvector = [0] * length
     count       = 0
     acum        = 0
     position    = 0
@@ -220,18 +235,18 @@ def grouphist(hist, bin, lenght):
 
 
 # Calcula o tamanho de posicoes necessarias com base no valor de agrupamento 'bin'.
-def calchistlenght(hist,bin):
+def calchistlength(hist, bin):
 
-    if len(hist) == 256: # indica que o hist foi feito com base em uma base de cinza
-        lenght = (len(hist) / bin)
+    if ishistgray(hist):
+        length = (len(hist) / bin)
         if len(hist) % bin != 0:
-            lenght += 1
+            length += 1
     else:
-        lenght = (len(hist[0]) / bin)
+        length = (len(hist[0]) / bin)
         if len(hist[0]) % bin != 0:
-            lenght += 1
+            length += 1
 
-    return lenght
+    return length
 
 # Questao 14 OK!!! necessario refatoracao
 def histeq(image):
@@ -242,7 +257,7 @@ def histeq(image):
     histqualized    = pmf(histogram, qtdpixels)
     cdf(histqualized)
 
-    if len(histqualized) == 256:
+    if ishistgray(histqualized):
         for x in range(0, 256):
             histqualized[x] *= MAXINTENSITY
     else:
@@ -253,7 +268,7 @@ def histeq(image):
 
 
     # Aplica o resultado da equalizacao na imagem
-    if len(histogram) == 256:
+    if ishistgray(histqualized):
         for x in range(0, imgsize[0]):
             for y in range(0, imgsize[1]):
                 imgequalized[x][y] = int(histqualized[imgequalized[x][y]])
@@ -270,7 +285,7 @@ def histeq(image):
 # Divide o total de pixels pela quantidade em cada posicao do histograma.
 def pmf(hist, qtdpixels):
 
-    if len(hist) == 256:
+    if ishistgray(hist):
         histequ = [float(i) for i in hist]
         for x in range(0, 256):
             histequ[x] /= qtdpixels
@@ -287,9 +302,9 @@ def pmf(hist, qtdpixels):
         return histequ
 
 
-# Acumula os valores do histograma, a ultima posicao do vetor deve ser 1.
+# Acumula os valores do histograma, a ultima posicao do vetor deve conter o valor 1.
 def cdf(hist):
-    if len(hist) == 256:
+    if ishistgray(hist):
         for x in range(1, 256):
             hist[x] = hist[x] + hist[x - 1]
     else:
@@ -303,11 +318,11 @@ def cdf(hist):
 
 # Questao 15
 def convolve(image, mask):
-    imagelenght = size(image)
+    imagelength = size(image)
     imageconvolved = image.copy()
 
-    for i in range(0, imagelenght[0]):
-        for j in range(0, imagelenght[1]):
+    for i in range(0, imagelength[0]):
+        for j in range(0, imagelength[1]):
             if isgray(image):
                 result = calcconvolve(i, j, image, mask)
                 result = truncate(result)
@@ -323,9 +338,9 @@ def convolve(image, mask):
 
 # Define o centro da mascara.
 def center(mask):
-    lenght = masklen(mask)
+    length = masklen(mask)
 
-    return int(lenght[0]/2), int(lenght[1]/2)
+    return int(length[0]/2), int(length[1]/2)
 
 
 # retorna uma tupla com a quantidade de linhas e colunas da mascara.
@@ -335,22 +350,22 @@ def masklen(mask):
 
 def calcconvolve(positionx, positiony, image, mask):
     centerposition = center(mask)
-    masklenght = masklen(mask)
+    masklength = masklen(mask)
     maskposition = relativeposition(positionx, positiony, centerposition)
     result = 0.0
     resultr = 0.0
     resultg = 0.0
     resultb = 0.0
     if isgray(image):
-        for i in range(0, masklenght[0]):
-            for j in range(0, masklenght[1]):
+        for i in range(0, masklength[0]):
+            for j in range(0, masklength[1]):
                 x = maskposition[0]+i
                 y = maskposition[1]+j
                 result += calcpixel(x, y, mask[i][j], image)
         return result
     else:
-        for i in range(0, masklenght[0]):
-            for j in range(0, masklenght[1]):
+        for i in range(0, masklength[0]):
+            for j in range(0, masklength[1]):
                 x = maskposition[0] + i
                 y = maskposition[1] + j
                 valuergb = calcpixel(x, y, mask[i][j], image)
@@ -372,16 +387,16 @@ def relativeposition(positionx, positiony, centerposition):
 # Mesma ideia do algoritmo de replicar os pixels mais proximos.
 # Retorna a valida do pixel dentro da imagem
 def outofbounds(positionx, positiony, image,):
-    imagelenght = size(image)
+    imagelength = size(image)
     if positionx < 0:
         positionx = 0
-    elif positionx > (imagelenght[0]-1):
-        positionx = imagelenght[0]-1
+    elif positionx > (imagelength[0]-1):
+        positionx = imagelength[0]-1
 
     if positiony < 0:
         positiony = 0
-    elif positiony > (imagelenght[1]-1):
-        positiony = imagelenght[1]-1
+    elif positiony > (imagelength[1]-1):
+        positiony = imagelength[1]-1
 
     return positionx, positiony
 
@@ -398,16 +413,6 @@ def calcpixel(positionx, positiony, weight, image):
         b = image[position[0]][position[1]][2]
 
         return r * weight, g * weight, b * weight
-
-
-def truncate(value):
-    v = int(value)
-    if   v > MAXINTENSITY:
-        return MAXINTENSITY
-    elif v < MININTENSITY:
-        return MININTENSITY
-
-    return v
 
 
 # testes----------------------------------------------------
@@ -440,7 +445,7 @@ energiaGrey = imread('EnergiaCinza.jpg')
 
 # Questao 13
 #showhist(hist(energiaGrey),50)
-#showhist(hist(energiaRG),25)
+#showhist(hist(imageRGB),1)
 
 # Questao 14
 #Image.fromarray(imageRGB).show()
@@ -454,16 +459,17 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # mask1x7[0][3] = 0.6
 # mask1x7[0][4] = 0.3
 # mask3x3 = [[0.0]*3, [0.0]*3, [0.0]*3]
-# mask3x3[0][1] = 0.2
-# mask3x3[1][0] = 0.2
-# mask3x3[1][1] = 1.0
-# mask3x3[1][2] = 0.2
-# mask3x3[2][1] = 0.2
-#
+# mask3x3[0][1] = float(1.0/25.0)
+# mask3x3[1][0] = float(1.0/25.0)
+# mask3x3[1][1] = float(1.0/25.0)
+# mask3x3[1][2] = float(1.0/25.0)
+# mask3x3[2][1] = float(1.0/25.0)
+# filtrodemedia = [[0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04],
+#  [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04]]
 # mask1x3 = [[0.0]*3]
 # mask5x5 = [[0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5]
 # mask3x7 = [[0.0]*7, [0.0]*7, [0.0]*7]
 # mask7x3 = [[0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3]
 # print(center(mask3x7))
-# img = convolve(imageRGB, mask3x3)
+# img = convolve(imageRGB, filtrodemedia)
 # Image.fromarray(img).save('convolvetest.jpg')
