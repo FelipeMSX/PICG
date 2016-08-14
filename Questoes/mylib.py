@@ -163,7 +163,7 @@ def showhist(hist, bin = 1):
 
         xvalues[lenght-1] = 255
 
-    width   = 1  # the width of the bars
+    width   = 0.35  # the width of the bars
     fig, ax = plt.subplots()
     if len(hist) == 256: #indica que o hist foi feito com base em uma base de cinza
         groupvector = grouphist(hist, bin, lenght)
@@ -177,8 +177,8 @@ def showhist(hist, bin = 1):
         groupvectorgreen    = grouphist(hist[1], bin, lenght)
         groupvectorblue     = grouphist(hist[2], bin, lenght)
         redrect             = ax.bar(xvalues, groupvectorred, width, color='r')
-        greenrect           = ax.bar(xvalues, groupvectorgreen, width, color='g')
-        bluerect            = ax.bar(xvalues, groupvectorblue, width, color='b')
+        greenrect           = ax.bar(xvalues+ width, groupvectorgreen, width, color='g')
+        bluerect            = ax.bar(xvalues+width*2, groupvectorblue, width, color='b')
 
         # add some text for labels, title and axes ticks
         ax.set_ylabel('Quantidade')
@@ -440,7 +440,7 @@ energiaGrey = imread('EnergiaCinza.jpg')
 
 # Questao 13
 #showhist(hist(energiaGrey),50)
-#showhist(hist(energiaRG),25)
+showhist(hist(energiaRG),25)
 
 # Questao 14
 #Image.fromarray(imageRGB).show()
@@ -454,16 +454,17 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # mask1x7[0][3] = 0.6
 # mask1x7[0][4] = 0.3
 # mask3x3 = [[0.0]*3, [0.0]*3, [0.0]*3]
-# mask3x3[0][1] = 0.2
-# mask3x3[1][0] = 0.2
-# mask3x3[1][1] = 1.0
-# mask3x3[1][2] = 0.2
-# mask3x3[2][1] = 0.2
-#
+# mask3x3[0][1] = float(1.0/25.0)
+# mask3x3[1][0] = float(1.0/25.0)
+# mask3x3[1][1] = float(1.0/25.0)
+# mask3x3[1][2] = float(1.0/25.0)
+# mask3x3[2][1] = float(1.0/25.0)
+# filtrodemedia = [[0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04],
+#  [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04]]
 # mask1x3 = [[0.0]*3]
 # mask5x5 = [[0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5]
 # mask3x7 = [[0.0]*7, [0.0]*7, [0.0]*7]
 # mask7x3 = [[0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3]
 # print(center(mask3x7))
-# img = convolve(imageRGB, mask3x3)
+# img = convolve(imageRGB, filtrodemedia)
 # Image.fromarray(img).save('convolvetest.jpg')
