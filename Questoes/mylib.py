@@ -319,7 +319,7 @@ def cdf(hist):
 
 # Questao 15
 def convolve(image, mask):
-    if type(maskBlur()) is numpy.ndarray:
+    if type(mask) is numpy.ndarray:
         mask = mask.tolist() #converte para lista casa nao seja.
     imagelength = size(image)
     imageconvolved = image.copy()
