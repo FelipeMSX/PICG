@@ -3,6 +3,7 @@ import numpy
 import scipy
 import matplotlib.pyplot as plt
 import math
+from types import *
 
 from PIL import Image
 
@@ -318,6 +319,8 @@ def cdf(hist):
 
 # Questao 15
 def convolve(image, mask):
+    if type(maskBlur()) is numpy.ndarray:
+        mask = mask.tolist() #converte para lista casa nao seja.
     imagelength = size(image)
     imageconvolved = image.copy()
 
@@ -400,6 +403,7 @@ def outofbounds(positionx, positiony, image,):
 
     return positionx, positiony
 
+
 # Calcula o valor do pixel da imagem multiplicado pelo peso.
 def calcpixel(positionx, positiony, weight, image):
     # Verifica se alguam coordenada esta fora da imagem e ajusta para o correto.
@@ -414,6 +418,24 @@ def calcpixel(positionx, positiony, weight, image):
 
         return r * weight, g * weight, b * weight
 
+
+# 16 - Crie uma funcao chamada maskBlur que retorna a mascara 1/16 * [[1, 2, 1], [2, 4, 2], [1,2,1]].-----------OK
+def maskBlur():
+    return 0.0625*numpy.asarray([[1.0, 2.0, 1.0], [2.0, 4.0, 2.0], [1.0, 2.0, 1.0]])
+
+
+# Questao 17
+def blur(image):
+    return convolve(image, maskBlur())
+
+# 18 - Crie uma funcao chamada seSquare3, que retorna o elemento estruturante binario [[1,1, 1], [1, 1, 1], [1, 1, 1]].-----OK
+def seSquare3():
+    return numpy.asarray([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
+
+
+# 19 - Crie uma funcao chamada seCross3, que retorna o elemento estruturante binario [[0, 1,0], [1, 1, 1], [0, 1, 0]].-------OK
+def seCross3():
+    return numpy.asarray([[0, 1, 0], [1, 1, 1], [0, 1, 0]]).tolist()
 
 # testes----------------------------------------------------
 imageRGB = imread('zenfoneGO.jpg')
@@ -464,12 +486,18 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # mask3x3[1][1] = float(1.0/25.0)
 # mask3x3[1][2] = float(1.0/25.0)
 # mask3x3[2][1] = float(1.0/25.0)
-# filtrodemedia = [[0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04],
-#  [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04]]
+#filtrodemedia = [[0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04],
+# [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04]]
 # mask1x3 = [[0.0]*3]
 # mask5x5 = [[0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5]
 # mask3x7 = [[0.0]*7, [0.0]*7, [0.0]*7]
 # mask7x3 = [[0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3]
 # print(center(mask3x7))
-# img = convolve(imageRGB, filtrodemedia)
-# Image.fromarray(img).save('convolvetest.jpg')
+#img = convolve(imageRGB, filtrodemedia)
+#Image.fromarray(img).save('convolvetest.jpg')
+#print type(maskBlur()) is numpy.ndarray
+# Questao 16
+#s = maskBlur()
+
+# Questao 17
+#Image.fromarray(blur(imageRGB)).show()
