@@ -1,9 +1,21 @@
+#----------------------------------------------
+# Nome: Felipe Morais Aragao
+# Matricula: 201320007330
+# E-mail: felipemsx18@gmail.com
+
+# Nome: Elvis dos Santos Martins,
+# Matricula: 201120002258
+# E-mailelvis.esm@gmail.com
+#----------------------------------------------
+
+#-------------Consideracoes inicias------------
+# So foram testadas imagems JPG
+
 import matplotlib
 import numpy
 import scipy
 import matplotlib.pyplot as plt
 import math
-from types import *
 
 from PIL import Image
 
@@ -41,12 +53,11 @@ def nchannels(image):
     return 1 if len(image.shape) == 2 else 3
 
 
-# precisa ser melhorada passivel de bugs
+# FUNCOES AUXILIARES -------------------------------------------------------
 def isgray(image):
     return nchannels(image) == 1
 
 
-# precisa ser melhorada passivel de bugs
 def isrgb(image):
     return nchannels(image) == 3
 
@@ -70,6 +81,7 @@ def truncate(value):
 def imagetondarray(image):
     return numpy.asarray(image)
 
+# FUNCOES AUXILIARES -------------------------------------------------------
 
 # Questao 04 OK!!!
 def size(image):
@@ -505,75 +517,3 @@ def seSquare3():
 # 19 - Crie uma funcao chamada seCross3, que retorna o elemento estruturante binario [[0, 1,0], [1, 1, 1], [0, 1, 0]].-------OK
 def seCross3():
     return numpy.asarray([[0, 1, 0], [1, 1, 1], [0, 1, 0]]).tolist()
-
-# testes----------------------------------------------------
-imageRGB = imread('zenfoneGO.jpg')
-imageGrey = imread('zenfoneGOGrey.jpg')
-energiaRG = imread('Energia.jpg')
-energiaGrey = imread('EnergiaCinza.jpg')
-# print(nchannels(imageRGB))
-# print(nchannels(imageGrey))
-#
-# print(size(imageRGB))
-# print(size(imageGrey))
-# print(type(size(imageGrey)[0]))
-# rgb2gray(imageRGB)
-
-#Questao 07
-#Image.fromarray(imshow(energiaRG)).save("nearest.jpg")
-
-# Questao 08
-# Image.fromarray(thresh(imageRGB,150)).show()
-
-# Questao 09
-# Image.fromarray(negative(imageGrey)).show()
-
-
-
-#Questao 10
-#Image.fromarray(contrast(imageRGB,1.5,0.25)).show()
-# Questao 11
-# v = hist(energiaRG)
-# v = hist(energiaGrey)
-# v = hist(energiaGrey)
-
-# Questao 11
-# showhist(hist(energiaGrey))
-# showhist(hist(imageRGB),25)
-
-# Questao 13
-#showhist(hist(imageRGB),5)
-#showhist(hist(imageRGB),1)
-
-# Questao 14
-#Image.fromarray(imageRGB).show()
-#Image.fromarray(histeq(imageGrey)).show()
-
-#Questao 15
-# mask1x1 = [[0.0]]
-# mask1x7 = [[0.0]*7]
-# mask1x7[0][1] = 0.3
-# mask1x7[0][2] = 0.6
-# mask1x7[0][3] = 0.6
-# mask1x7[0][4] = 0.3
-# mask3x3 = [[0.0]*3, [0.0]*3, [0.0]*3]
-# mask3x3[0][1] = float(1.0/25.0)
-# mask3x3[1][0] = float(1.0/25.0)
-# mask3x3[1][1] = float(1.0/25.0)
-# mask3x3[1][2] = float(1.0/25.0)
-# mask3x3[2][1] = float(1.0/25.0)
-#filtrodemedia = [[0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04],
-# [0.04, 0.04, 0.04, 0.04, 0.04], [0.04, 0.04, 0.04, 0.04, 0.04]]
-# mask1x3 = [[0.0]*3]
-# mask5x5 = [[0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5, [0.0]*5]
-# mask3x7 = [[0.0]*7, [0.0]*7, [0.0]*7]
-# mask7x3 = [[0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3, [0.0]*3]
-# print(center(mask3x7))
-#img = convolve(imageRGB, filtrodemedia)
-#Image.fromarray(img).save('convolvetest.jpg')
-#print type(maskBlur()) is numpy.ndarray
-# Questao 16
-#s = maskBlur()
-
-# Questao 17
-#Image.fromarray(blur(imageRGB)).show()
