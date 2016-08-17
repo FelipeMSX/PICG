@@ -67,6 +67,10 @@ def truncate(value):
     return v
 
 
+def imagetondarray(image):
+    return numpy.asarray(image)
+
+
 # Questao 04 OK!!!
 def size(image):
     vector = [0] * 2
@@ -101,11 +105,58 @@ def imreadgray(filename):
     return rgb2gray(img) if isrgb(img) else img
 
 
-# Questo 07
-# --------------------- Incompelta, nao consigo entender o que o professor quer.
+# Questo 07 Considerando que a imagem passada como parametro "e" ndarray. Funciona para ambos os tipos de imagens
 def imshow(image):
-    Image.fromarray(image).show()
-    return
+    if isgray(image):
+        imageSize = size(image)
+        newImage = numpy.asarray(Image.new("L", (imageSize[0] * 2, imageSize[1] * 2))).copy()
+
+        imageCopySize = size(newImage)
+        origX = 0
+        x = 0
+        while (x < imageCopySize[0]):
+            y = 0
+            origY = 0
+            while (y < imageCopySize[1]):
+                newImage[x][y] = image[origX][origY]
+                newImage[x][y + 1] = image[origX][origY]
+                newImage[x + 1][y] = image[origX][origY]
+                newImage[x + 1][y + 1] = image[origX][origY]
+                origY += 1
+                y += 2
+            x += 2
+            origX += 1
+    else:
+        imageSize = size(image)
+        newImage = numpy.asarray(Image.new("RGB", (imageSize[0] * 2, imageSize[1] * 2))).copy()
+
+        imageCopySize = size(newImage)
+        origX = 0
+        x = 0
+        while (x < imageCopySize[0]):
+            y = 0
+            origY = 0
+            while (y < imageCopySize[1]):
+                newImage[x][y][0]           = image[origX][origY][0]
+                newImage[x][y + 1][0]       = image[origX][origY][0]
+                newImage[x + 1][y][0]       = image[origX][origY][0]
+                newImage[x + 1][y + 1][0]   = image[origX][origY][0]
+
+                newImage[x][y][1]           = image[origX][origY][1]
+                newImage[x][y + 1][1]       = image[origX][origY][1]
+                newImage[x + 1][y][1]       = image[origX][origY][1]
+                newImage[x + 1][y + 1][1]   = image[origX][origY][1]
+
+                newImage[x][y][2]           = image[origX][origY][2]
+                newImage[x][y + 1][2]       = image[origX][origY][2]
+                newImage[x + 1][y][2]       = image[origX][origY][2]
+                newImage[x + 1][y + 1][2]   = image[origX][origY][2]
+                origY += 1
+                y += 2
+            x += 2
+            origX += 1
+
+    return newImage
 
 
 # Questao 08 OK!!!
@@ -142,9 +193,27 @@ def negative(image):
     return newImage
 
 
-# Questao 10 OK depende da questao 07 q estou com duvida.
-def contrast(r, m, f):
-    return r(f - m) + m
+# Questao 10 OK
+def contrast(image, r, m):
+    newImage  = image.copy()
+    imageSize = size(image)
+    if isgray(image):
+        for x in range(0, imageSize[0]):
+            for y in range(0, imageSize[1]):
+                value = truncate(r * (image[x][y] - m) + m)
+                newImage[x][y] = value
+
+    else:
+        for x in range(0, imageSize[0]):
+            for y in range(0, imageSize[1]):
+                value = truncate(r * (image[x][y][0] - m) + m)
+                newImage[x][y][0] = value
+                value = truncate(r * (image[x][y][1] - m) + m)
+                newImage[x][y][1] = value
+                value = truncate(r * (image[x][y][2] - m) + m)
+                newImage[x][y][2] = value
+
+    return newImage
 
 
 # Questao 11 OK!!!
@@ -450,13 +519,20 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # print(type(size(imageGrey)[0]))
 # rgb2gray(imageRGB)
 
+#Questao 07
+#Image.fromarray(imshow(energiaRG)).save("nearest.jpg")
+
 # Questao 08
 # Image.fromarray(thresh(imageRGB,150)).show()
 
 # Questao 09
 # Image.fromarray(negative(imageGrey)).show()
 
-# Questao 10
+
+
+#Questao 10
+#Image.fromarray(contrast(imageRGB,1.5,0.25)).show()
+# Questao 11
 # v = hist(energiaRG)
 # v = hist(energiaGrey)
 # v = hist(energiaGrey)
@@ -466,7 +542,7 @@ energiaGrey = imread('EnergiaCinza.jpg')
 # showhist(hist(imageRGB),25)
 
 # Questao 13
-#showhist(hist(energiaGrey),50)
+#showhist(hist(imageRGB),5)
 #showhist(hist(imageRGB),1)
 
 # Questao 14
